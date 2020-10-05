@@ -289,7 +289,7 @@ const DEBUG = (window.location.hostname == "localhost");
             return "http://localhost:8080";
         }
 
-        return "https://prod-api.syncmedia.io";
+        return "https://adlytics.syncmedia.io";
     }());
 
     if (DEBUG) {
