@@ -49,8 +49,18 @@ function log(type, ...args) {
     console[type].apply(Array.prototype.slice.call(args));
 }
 
-function parse_req_params() {
-    let config = {};
+function load_config() {
+    let config = {
+        meta: {
+            hostname:   window.location.hostname,
+            pathname:   window.location.pathname,
+            href:       window.location.href,
+            referrer:   document.referrer,
+            is_mobile:  (SmartPhone.isIOS() || SmartPhone.isAndroid() || SmartPhone.isWindowsMobile() || SmartPhone.isNexus() || false),
+            user_agent: navigator.userAgent,
+            platform:   navigator.platform
+        }
+    };
 
     let scripts = document.getElementsByTagName('script');
     var i;
@@ -68,21 +78,17 @@ function parse_req_params() {
         mylog.error("Please check fix the included js library path, `src` link is missing api_key.");
     }
 
+    geo_data().then((data) => {
+        ['ip', 'city', 'region', 'country', 'loc', 'timezone'].forEach((item) => {
+            config.meta[item] = data[item] ?? false;
+        });
+    });
+
     return config;
 }
 
 
-function read_browser_meta() {
-    let meta = {
-        hostname:   window.location.hostname,
-        pathname:   window.location.pathname,
-        href:       window.location.href,
-        referrer:   document.referrer,
-        is_mobile:  (SmartPhone.isIOS() || SmartPhone.isAndroid() || SmartPhone.isWindowsMobile() || SmartPhone.isNexus() || false),
-        user_agent: navigator.userAgent,
-        platform:   navigator.platform
-    };
-
+function geo_data() {
     let args = {
           method: "GET",
           mode: "cors", // same-origin, no-cors
@@ -94,14 +100,7 @@ function read_browser_meta() {
 
     return fetch('https://ipinfo.io/json?token=f6d5b4490ab073', args)
         .then((resp) => resp.json())
-
-        .then((data) => {
-            ['ip', 'city', 'region', 'country', 'loc', 'timezone'].forEach((item) => {
-                meta[item] = data[item] ?? false;
-            });
-            return meta;
-        })
-        .catch((error) => meta);
+        .catch((error) => {});
 }
 
 (function() {
@@ -115,12 +114,23 @@ function read_browser_meta() {
         this._wrapped = obj;
     };
 
-    let config = parse_req_params();
+    let config = load_config();
+
 
     let api = {};
 
     api.setUser = function(user) {
         config.user_id = user;
+    };
+
+    api.logEvent = function(key, payload) {
+        if (typeof(payload) == "object") {
+
+        }
+        else {
+            payload = String(payload);
+        }
+        // send to server
     };
 
     SMApp.api = api;
