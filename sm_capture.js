@@ -124,13 +124,14 @@ function geo_data() {
     };
 
     api.logEvent = function(key, payload) {
-        if (typeof(payload) == "object") {
+        let json = {index: key, payload: "", config: config};
 
+        if (typeof(payload) == "object") {
+            json.payload = JSON.stringify(payload);
         }
         else {
-            payload = String(payload);
+            json.payload = String(payload);
         }
-        // send to server
     };
 
     SMApp.api = api;
