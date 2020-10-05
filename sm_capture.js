@@ -212,20 +212,30 @@ const DEBUG = (window.location.hostname == "localhost");
             .catch((error) => { return {}; });
     };
 
-    let config = (function() {
-        let config = {
-            user: "unknown",
-            meta: {
-                hostname:   window.location.hostname,
-                pathname:   window.location.pathname,
-                href:       window.location.href,
-                referrer:   document.referrer,
-                is_mobile:  (SmartPhone.isIOS() || SmartPhone.isAndroid() || SmartPhone.isWindowsMobile() || SmartPhone.isNexus() || false),
-                user_agent: navigator.userAgent,
-                platform:   navigator.platform
-            }
-        };
+    let config = {
+        user: "unknown",
+        api_key: false,
+        meta: {
+            hostname:   window.location.hostname,
+            pathname:   window.location.pathname,
+            href:       window.location.href,
+            referrer:   document.referrer,
+            is_mobile:  (SmartPhone.isIOS() || SmartPhone.isAndroid() || SmartPhone.isWindowsMobile() || SmartPhone.isNexus() || false),
+            user_agent: navigator.userAgent,
+            platform:   navigator.platform
+        }
+    };
 
+    let validate_api_key = (api_key) => {
+        if (!!!config.api_key) {
+            mylog.error("Please check fix the included js library path, `src` link is missing api_key.");
+            return false;
+        }
+
+        return true;
+    };
+
+    (function() {
         let scripts = document.getElementsByTagName('script');
         var i;
         for (i = 0; i < scripts.length; i++) {
@@ -238,8 +248,8 @@ const DEBUG = (window.location.hostname == "localhost");
             }
         }
 
-        if (!!!config.api_key) {
-            mylog.error("Please check fix the included js library path, `src` link is missing api_key.");
+        if (!validate_api_key(config.api_key)) {
+            return;
         }
 
         geo_data().then((data) => {
@@ -248,9 +258,7 @@ const DEBUG = (window.location.hostname == "localhost");
             });
         }).then(() => {
             SMApp.logEvent("event1", {key: 'asd'});
-        })
-
-        return config;
+        });
     }());
 
     if (DEBUG) {
@@ -262,6 +270,10 @@ const DEBUG = (window.location.hostname == "localhost");
     };
 
     SMApp.logEvent = function(key, payload) {
+        if (!validate_api_key()) {
+            return;
+        }
+
         let json = {index: key, payload: "", config: config};
 
         if (typeof(payload) == "object") {
