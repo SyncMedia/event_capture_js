@@ -219,7 +219,7 @@ const DEBUG = (window.location.hostname == "localhost");
               referrer: "no-referrer",
               credentials: "omit", // omit, include
               cache: "no-store", // no-store, reload, no-cache, force-cache, or only-if-cached
-              keepalive: false, // true
+              keepalive: false // true
         };
 
         return fetch('https://ipinfo.io/json?token=f6d5b4490ab073', args)
@@ -280,6 +280,18 @@ const DEBUG = (window.location.hostname == "localhost");
         });
     }());
 
+    const sm_host = (function() {
+        if (window.location.hostname == "localhost" && window.location.port == "9091") {
+            return "https://staging-api.syncmedia.io";
+        }
+
+        if (window.location.hostname == "localhost" && window.location.port == "9092") {
+            return "http://localhost:8080";
+        }
+
+        return "https://prod-api.syncmedia.io";
+    }());
+
     if (DEBUG) {
         SMApp.config = config;
     }
@@ -309,6 +321,21 @@ const DEBUG = (window.location.hostname == "localhost");
         }
 
         mylog.debug("event: " + key, json);
+
+        let URL = sm_host + "/v1.0/events/capture";
+
+        return fetch(URL, {
+            method: 'post',
+            mode: "cors", // same-origin, no-cors
+            referrer: "no-referrer",
+            credentials: "omit",
+            cache: "no-store",
+            keepalive: false, // omit, include
+            body: JSON.stringify(json)
+        }).then((response) => {
+            mylog.debug("event saved: ", json.event_id);
+            return response.status == 200;
+        });
     };
 
     root.SMApp = SMApp;
