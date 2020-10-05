@@ -150,109 +150,6 @@
 }.call(this));
 const DEBUG = (window.location.hostname == "localhost");
 
-window.onload = (event) => {
-    console.log('The page has fully loaded');
-
-};
-
-let mylog = (function () {
-    let root = {
-        log: function() {
-            var args = Array.prototype.slice.call(arguments);
-            console.log.apply(console, args);
-        },
-        debug: function() {
-            var args = Array.prototype.slice.call(arguments);
-            console.debug.apply(console, args);
-        },
-        warn: function() {
-            var args = Array.prototype.slice.call(arguments);
-            console.warn.apply(console, args);
-        },
-        error: function() {
-            var args = Array.prototype.slice.call(arguments);
-            console.error.apply(console, args);
-        }
-    };
-
-    let logs = ['log', 'warn', 'error', 'assert'];
-
-    if (DEBUG) {
-        logs.push('debug');
-    }
-
-    logs.forEach((item) => {
-        root[item] = function() {
-            var args = Array.prototype.slice.call(arguments);
-            console[item].apply(console, args);
-        };
-    });
-
-    return root;
-}());
-
-function log(type, ...args) {
-    if (type == "debug" && !DEBUG) {
-        return;
-    }
-
-    console[type].apply(Array.prototype.slice.call(args));
-}
-
-function load_config() {
-    let config = {
-        meta: {
-            hostname:   window.location.hostname,
-            pathname:   window.location.pathname,
-            href:       window.location.href,
-            referrer:   document.referrer,
-            is_mobile:  (SmartPhone.isIOS() || SmartPhone.isAndroid() || SmartPhone.isWindowsMobile() || SmartPhone.isNexus() || false),
-            user_agent: navigator.userAgent,
-            platform:   navigator.platform
-        }
-    };
-
-    let scripts = document.getElementsByTagName('script');
-    var i;
-    for (i = 0; i < scripts.length; i++) {
-        if (scripts[i].src.indexOf("sm_capture.js") != -1) {
-            let params = (scripts[i].src.split('?')[1] ?? "").split("&");
-            params.forEach((param) => {
-                let kv = param.split("=");
-                config[kv[0]] = kv[1] ?? true;
-            });
-        }
-    }
-
-    if (!!!config.api_key) {
-        mylog.error("Please check fix the included js library path, `src` link is missing api_key.");
-    }
-
-    geo_data().then((data) => {
-        ['ip', 'city', 'region', 'country', 'loc', 'timezone'].forEach((item) => {
-            config.meta[item] = data[item] ?? false;
-        });
-    });
-
-    return config;
-}
-
-
-function geo_data() {
-    let args = {
-          method: "GET",
-          mode: "cors", // same-origin, no-cors
-          referrer: "no-referrer",
-          credentials: "omit", // omit, include
-          cache: "no-store", // no-store, reload, no-cache, force-cache, or only-if-cached
-          keepalive: false, // true
-    };
-
-    return fetch('https://ipinfo.io/json?token=f6d5b4490ab073', args)
-        .then((resp) => resp.json())
-        .catch((error) => { return {}; });
-}
-
 (function() {
     var root = this;
 
@@ -264,15 +161,107 @@ function geo_data() {
         this._wrapped = obj;
     };
 
-    let config = load_config();
+    let mylog = (function () {
+        // let root = {
+        //     log: function() {
+        //         var args = Array.prototype.slice.call(arguments);
+        //         console.log.apply(console, args);
+        //     },
+        //     debug: function() {
+        //         var args = Array.prototype.slice.call(arguments);
+        //         console.debug.apply(console, args);
+        //     },
+        //     warn: function() {
+        //         var args = Array.prototype.slice.call(arguments);
+        //         console.warn.apply(console, args);
+        //     },
+        //     error: function() {
+        //         var args = Array.prototype.slice.call(arguments);
+        //         console.error.apply(console, args);
+        //     }
+        // };
 
-    let api = {};
+        let logs = ['log', 'warn', 'error', 'assert'];
 
-    api.setUser = function(user) {
-        config.user_id = user;
+        if (DEBUG) {
+            logs.push('debug');
+        }
+
+        logs.forEach((item) => {
+            root[item] = function() {
+                var args = Array.prototype.slice.call(arguments);
+                console[item].apply(console, args);
+            };
+        });
+
+        return root;
+    }());
+
+    let geo_data = () => {
+        let args = {
+              method: "GET",
+              mode: "cors", // same-origin, no-cors
+              referrer: "no-referrer",
+              credentials: "omit", // omit, include
+              cache: "no-store", // no-store, reload, no-cache, force-cache, or only-if-cached
+              keepalive: false, // true
+        };
+
+        return fetch('https://ipinfo.io/json?token=f6d5b4490ab073', args)
+            .then((resp) => resp.json())
+            .catch((error) => { return {}; });
     };
 
-    api.logEvent = function(key, payload) {
+    let config = (function() {
+        let config = {
+            user: "unknown",
+            meta: {
+                hostname:   window.location.hostname,
+                pathname:   window.location.pathname,
+                href:       window.location.href,
+                referrer:   document.referrer,
+                is_mobile:  (SmartPhone.isIOS() || SmartPhone.isAndroid() || SmartPhone.isWindowsMobile() || SmartPhone.isNexus() || false),
+                user_agent: navigator.userAgent,
+                platform:   navigator.platform
+            }
+        };
+
+        let scripts = document.getElementsByTagName('script');
+        var i;
+        for (i = 0; i < scripts.length; i++) {
+            if (scripts[i].src.indexOf("sm_capture.js") != -1) {
+                let params = (scripts[i].src.split('?')[1] ?? "").split("&");
+                params.forEach((param) => {
+                    let kv = param.split("=");
+                    config[kv[0]] = kv[1] ?? true;
+                });
+            }
+        }
+
+        if (!!!config.api_key) {
+            mylog.error("Please check fix the included js library path, `src` link is missing api_key.");
+        }
+
+        geo_data().then((data) => {
+            ['ip', 'city', 'region', 'country', 'loc', 'timezone'].forEach((item) => {
+                config.meta[item] = data[item] ?? false;
+            });
+        }).then(() => {
+            SMApp.logEvent("event1", {key: 'asd'});
+        })
+
+        return config;
+    }());
+
+    if (DEBUG) {
+        SMApp.config = config;
+    }
+
+    SMApp.setUser = function(user) {
+        config.user = user;
+    };
+
+    SMApp.logEvent = function(key, payload) {
         let json = {index: key, payload: "", config: config};
 
         if (typeof(payload) == "object") {
@@ -281,14 +270,9 @@ function geo_data() {
         else {
             json.payload = String(payload);
         }
+
+        mylog.debug("event: " + key, json);
     };
 
-    SMApp.api = api;
-
-    if (DEBUG) {
-        SMApp.config = config;
-    }
-
     root.SMApp = SMApp;
-
 }.call(this));
