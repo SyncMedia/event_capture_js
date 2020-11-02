@@ -204,33 +204,6 @@ const DEBUG = (window.location.hostname == "localhost");
         return root;
     }());
 
-    let geo_data = () => {
-        let cached = localStorage.getItem("sm.geo.cache");
-
-        if (!!cached) {
-            return new Promise((resolve, reject) => {
-                resolve(JSON.parse(cached));
-            });
-        }
-
-        let args = {
-              method: "GET",
-              mode: "cors", // same-origin, no-cors
-              referrer: "no-referrer",
-              credentials: "omit", // omit, include
-              cache: "no-store", // no-store, reload, no-cache, force-cache, or only-if-cached
-              keepalive: false // true
-        };
-
-        return fetch('https://ipinfo.io/json?token=f6d5b4490ab073', args)
-            .then((resp) => resp.json())
-            .catch((error) => { return {}; })
-            .then((data) => {
-                localStorage.setItem("sm.geo.cache", JSON.stringify(data));
-                return data;
-            });
-    };
-
     let config = {
         user: "unknown",
         api_key: false,
@@ -271,22 +244,16 @@ const DEBUG = (window.location.hostname == "localhost");
             return;
         }
 
-        geo_data().then((data) => {
-            ['ip', 'city', 'region', 'country', 'loc', 'timezone'].forEach((item) => {
-                config.meta[item] = data[item] ?? false;
-            });
-        }).then(() => {
-            SMApp.logEvent("event1", {key: 'asd'});
-        });
+        SMApp.logEvent("open", {key: 'asd'});
     }());
 
     const sm_host = (function() {
-        if (window.location.hostname == "localhost" && window.location.port == "9091") {
-            return "https://staging-api.syncmedia.io";
-        }
-
         if (window.location.hostname == "localhost" && window.location.port == "9092") {
             return "http://localhost:8080";
+        }
+
+        if (window.location.hostname == "localhost" && window.location.port == "9091") {
+            return "https://staging-api.syncmedia.io";
         }
 
         return "https://adlytics.syncmedia.io";

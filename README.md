@@ -7,7 +7,7 @@ Sync Browser library to track browser specific data
 Include below snippet in query
 
 ```
-<script type="text/javascript" src="https://storage.syncmedia.io/libs/sm_capture.js?api_key=API_KEY" charset="utf-8" crossorigin="anonymous"></script>
+<script type="text/javascript" src="https://storage.syncmedia.io/libs/sm_capture_v1.0.js?api_key=API_KEY" charset="utf-8" crossorigin="anonymous"></script>
 ```
 
 # Contributors
