@@ -155,7 +155,6 @@
     }
 
 }.call(this));
-const DEBUG = (window.location.hostname == "localhost");
 
 (function() {
     var root = this;
@@ -190,7 +189,7 @@ const DEBUG = (window.location.hostname == "localhost");
 
         let logs = ['log', 'warn', 'error', 'assert'];
 
-        if (DEBUG) {
+        if (window.location.hostname == "localhost") {
             logs.push('debug');
         }
 
@@ -227,26 +226,6 @@ const DEBUG = (window.location.hostname == "localhost");
         return true;
     };
 
-    (function() {
-        let scripts = document.getElementsByTagName('script');
-        var i;
-        for (i = 0; i < scripts.length; i++) {
-            if (scripts[i].src.indexOf("sm_capture.js") != -1) {
-                let params = (scripts[i].src.split('?')[1] ?? "").split("&");
-                params.forEach((param) => {
-                    let kv = param.split("=");
-                    config[kv[0]] = kv[1] ?? true;
-                });
-            }
-        }
-
-        if (!validate_api_key(config.api_key)) {
-            return;
-        }
-
-        SMApp.logEvent("open", {key: 'asd'});
-    }());
-
     const sm_host = (function() {
         if (window.location.hostname == "localhost" && window.location.port == "9092") {
             return "http://localhost:8080";
@@ -259,9 +238,7 @@ const DEBUG = (window.location.hostname == "localhost");
         return "https://adlytics.syncmedia.io";
     }());
 
-    if (DEBUG) {
-        SMApp.config = config;
-    }
+    SMApp.config = config;
 
     SMApp.setUser = function(user) {
         config.user = user;
@@ -289,7 +266,7 @@ const DEBUG = (window.location.hostname == "localhost");
 
         mylog.debug("event: " + key, json);
 
-        let URL = sm_host + "/v1.0/events/capture";
+        let URL = sm_host + "/v1.0/adlytics/js/events/capture";
 
         return fetch(URL, {
             method: 'post',
@@ -304,6 +281,26 @@ const DEBUG = (window.location.hostname == "localhost");
             return response.status == 200;
         });
     };
+
+    (function() {
+        let scripts = document.getElementsByTagName('script');
+        var i;
+        for (i = 0; i < scripts.length; i++) {
+            if (scripts[i].src.indexOf("sm_capture.js") != -1) {
+                let params = (scripts[i].src.split('?')[1] ?? "").split("&");
+                params.forEach((param) => {
+                    let kv = param.split("=");
+                    config[kv[0]] = kv[1] ?? true;
+                });
+            }
+        }
+
+        if (!validate_api_key(config.api_key)) {
+            return;
+        }
+
+        SMApp.logEvent("open", {key: 'asd'});
+    }());
 
     root.SMApp = SMApp;
 }.call(this));
