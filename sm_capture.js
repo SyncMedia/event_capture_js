@@ -238,8 +238,6 @@
         return "https://adlytics.syncmedia.io";
     }());
 
-    SMApp.config = config;
-
     SMApp.setUser = function(user) {
         config.user = user;
     };
