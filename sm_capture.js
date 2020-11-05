@@ -254,7 +254,7 @@
 
         mylog.debug("event: " + key, json);
 
-        const URL = "http://localhost:8080/v1.0/adlytics/js/events/capture";
+        const URL = "http://localhost:9000/v1.0/adlytics/js/events/capture";
 
         return fetch(URL, {
             method: 'post',
@@ -263,6 +263,9 @@
             credentials: "omit",
             cache: "no-store",
             keepalive: false, // omit, include
+            headers: {
+                'Content-Type': 'application/json',
+            },
             body: JSON.stringify(json)
         }).then((response) => {
             mylog.debug("event saved: ", json.event_id);
