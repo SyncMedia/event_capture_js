@@ -255,11 +255,13 @@
             event_id: uuidv4()
         };
 
-        if (typeof(payload) == "object") {
-            json.payload = JSON.stringify(payload);
-        }
-        else {
-            json.payload = String(payload);
+        if (!!payload) {
+            if (typeof(payload) == "object") {
+                json.payload = JSON.stringify(payload);
+            }
+            else {
+                json.payload = String(payload);
+            }
         }
 
         mylog.debug("event: " + key, json);
@@ -297,7 +299,7 @@
             return;
         }
 
-        SMApp.logEvent("open", {key: 'asd'});
+        SMApp.logEvent("open");
     }());
 
     root.SMApp = SMApp;
