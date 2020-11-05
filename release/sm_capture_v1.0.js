@@ -265,7 +265,7 @@
             keepalive: false, // omit, include
             headers: {
                 'Content-Type': 'application/json',
-            }
+            },
             body: JSON.stringify(json)
         }).then((response) => {
             mylog.debug("event saved: ", json.event_id);
