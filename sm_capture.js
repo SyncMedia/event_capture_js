@@ -226,18 +226,6 @@
         return true;
     };
 
-    const sm_host = (function() {
-        if (window.location.hostname == "localhost" && window.location.port == "9092") {
-            return "http://localhost:8080";
-        }
-
-        if (window.location.hostname == "localhost" && window.location.port == "9091") {
-            return "https://staging-api.syncmedia.io";
-        }
-
-        return "https://adlytics.syncmedia.io";
-    }());
-
     SMApp.setUser = function(user) {
         config.user = user;
     };
@@ -266,7 +254,7 @@
 
         mylog.debug("event: " + key, json);
 
-        let URL = sm_host + "/v1.0/adlytics/js/events/capture";
+        const URL = "http://localhost:8080/v1.0/adlytics/js/events/capture";
 
         return fetch(URL, {
             method: 'post',
