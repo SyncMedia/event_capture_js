@@ -254,7 +254,7 @@
 
         mylog.debug("event: " + key, json);
 
-        const URL = "http://localhost:9000/v1.0/adlytics/js/events/capture";
+        const URL = "https://integrations.syncmedia.io/v1.0/adlytics/js/events/capture";
 
         return fetch(URL, {
             method: 'post',
