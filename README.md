@@ -31,3 +31,7 @@ SMApp.logEvent(eventname, string);
 # Contributors
 
 * Pankaj Soni <pankajsoni19@syncmedia.io>
+
+## Previous Releases
+
+* [sm\_capture\_v1.0.js](https://storage.syncmedia.io/libs/sm_capture_v1.0.js)
