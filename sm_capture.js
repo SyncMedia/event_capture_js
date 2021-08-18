@@ -252,7 +252,7 @@
             }
         }
 
-        mylog.debug("event: " + key, json);
+//         mylog.debug("event: " + key, json);
 
         const URL = "https://integrations.syncmedia.io/v1.0/adlytics/js/events/capture";
 
@@ -268,7 +268,7 @@
             },
             body: JSON.stringify(json)
         }).then((response) => {
-            mylog.debug("event saved: ", json.event_id);
+//             mylog.debug("event saved: ", json.event_id);
             return response.status == 200;
         });
     };
