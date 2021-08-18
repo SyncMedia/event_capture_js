@@ -202,7 +202,9 @@
 
         return root;
     }());
-
+    
+    let isMobile = !!(SmartPhone.isIOS() || SmartPhone.isAndroid() || SmartPhone.isWindowsMobile() || SmartPhone.isNexus() || false);
+    
     let config = {
         user: "unknown",
         api_key: false,
@@ -211,7 +213,7 @@
             pathname:   window.location.pathname,
             href:       window.location.href,
             referrer:   document.referrer,
-            is_mobile:  (SmartPhone.isIOS() || SmartPhone.isAndroid() || SmartPhone.isWindowsMobile() || SmartPhone.isNexus() || false),
+            is_mobile:  isMobile,
             user_agent: navigator.userAgent,
             platform:   navigator.platform
         }
@@ -252,8 +254,6 @@
             }
         }
 
-//         mylog.debug("event: " + key, json);
-
         const URL = "https://integrations.syncmedia.io/v1.0/adlytics/js/events/capture";
 
         return fetch(URL, {
@@ -268,7 +268,6 @@
             },
             body: JSON.stringify(json)
         }).then((response) => {
-//             mylog.debug("event saved: ", json.event_id);
             return response.status == 200;
         });
     };
@@ -277,7 +276,7 @@
         let scripts = document.getElementsByTagName('script');
         var i;
         for (i = 0; i < scripts.length; i++) {
-            if (scripts[i].src.indexOf("sm_capture.js") != -1) {
+            if (scripts[i].src.indexOf("https://storage.syncmedia.io/libs/sm_capture") != -1) {
                 let params = (scripts[i].src.split('?')[1] ?? "").split("&");
                 params.forEach((param) => {
                     let kv = param.split("=");
