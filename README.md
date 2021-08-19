@@ -18,12 +18,12 @@ __Prod__
 
 __api_key__
 
-* `table` -> `adlytics_campaign` > `campaign`
+> `adlytics_campaign` > `campaign`
 
 
 __events__
 
-> `table` -> `adlytics_live_data`
+> `adlytics_live_data`
 
 ### Log Custom Event
 
