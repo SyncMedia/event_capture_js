@@ -9,7 +9,11 @@ Include below snippet in query
 __Prod__
 
 ```
-<script type="text/javascript" src="https://storage.syncmedia.io/libs/sm_capture_v1.1.js?api_key=API_KEY" charset="utf-8" crossorigin="anonymous"></script>
+<script type="text/javascript" 
+    src="https://storage.syncmedia.io/libs/sm_capture_v1.1.min.js?api_key=API_KEY" 
+    charset="utf-8" 
+    crossorigin="anonymous">
+</script>
 ```
 
 __api_key__
