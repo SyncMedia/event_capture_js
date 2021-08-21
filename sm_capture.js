@@ -205,6 +205,32 @@
     
     let isMobile = !!(SmartPhone.isIOS() || SmartPhone.isAndroid() || SmartPhone.isWindowsMobile() || SmartPhone.isNexus() || false);
     
+    let searchToObject = () => {
+        let obj = {};
+
+        let query = window.location.search.substring(1);
+
+        if (query === "") {
+            return obj;
+        }
+        
+        let pairs = query.split("&");
+
+        for (let i in pairs ) {
+            if ( pairs[i] === "" ) { continue }
+              
+            let pair = pairs[i].split("=");
+
+            if (pair.length === 1 || pair[1] === "") {
+                obj[ decodeURIComponent( pair[0] ) ] = true;
+            } else {
+                obj[ decodeURIComponent( pair[0] ) ] = decodeURIComponent( pair[1] );
+            }
+        }
+
+        return obj;
+    };
+
     let config = {
         user: "unknown",
         api_key: false,
@@ -215,11 +241,12 @@
             referrer:   document.referrer,
             is_mobile:  isMobile,
             user_agent: navigator.userAgent,
-            platform:   navigator.platform
+            platform:   navigator.platform,
+            query:      searchToObject()
         }
     };
 
-    let validate_api_key = (api_key) => {
+    let validate_api_key = () => {
         if (!!!config.api_key) {
             mylog.error("Please check fix the included js library path, `src` link is missing api_key.");
             return false;
@@ -232,44 +259,64 @@
         config.user = user;
     };
 
-    SMApp.logEvent = function(key, payload) {
+    let flatten = function(data) {
+        var result = {};
+        function recurse (cur, prop) {
+            if (Object(cur) !== cur) {
+                result[prop] = cur;
+            } else if (Array.isArray(cur)) {
+                 for(var i=0, l=cur.length; i<l; i++)
+                     recurse(cur[i], prop + "[" + i + "]");
+                if (l == 0)
+                    result[prop] = [];
+            } else {
+                var isEmpty = true;
+                for (var p in cur) {
+                    isEmpty = false;
+                    recurse(cur[p], prop ? prop+"."+p : p);
+                }
+                if (isEmpty && prop)
+                    result[prop] = {};
+            }
+        }
+        recurse(data, "");
+        return result;
+    }
+
+    SMApp.logEvent = async function(event, payload) {
         if (!validate_api_key()) {
             return;
         }
 
-        let json = {
-            index: key,
-            payload: "",
-            config: config,
-            timestamp: new Date().getTime(),
-            event_id: uuidv4()
-        };
-
         if (!!payload) {
-            if (typeof(payload) == "object") {
-                json.payload = JSON.stringify(payload);
-            }
-            else {
-                json.payload = String(payload);
-            }
+            payload = {};
         }
 
+        let json = {
+            event: event,
+            config: config,
+            timestamp: new Date().getTime(),
+            event_id: uuidv4(),
+            payload: JSON.stringify(payload)
+        };
+
+        json = flatten(json);
+        
         const URL = "https://integrations.syncmedia.io/v1.0/adlytics/js/events/capture";
 
-        return fetch(URL, {
+        const response = await fetch(URL, {
             method: 'post',
-            mode: "cors", // same-origin, no-cors
+            mode: "cors",
             referrer: "no-referrer",
             credentials: "omit",
             cache: "no-store",
-            keepalive: false, // omit, include
+            keepalive: false,
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(json)
-        }).then((response) => {
-            return response.status == 200;
         });
+        return response.status == 200;
     };
 
     (function() {
@@ -285,7 +332,7 @@
             }
         }
 
-        if (!validate_api_key(config.api_key)) {
+        if (!validate_api_key()) {
             return;
         }
 
