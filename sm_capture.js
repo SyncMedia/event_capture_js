@@ -235,6 +235,7 @@
         user: "unknown",
         api_key: false,
         meta: {
+            host:       window.location.host,
             hostname:   window.location.hostname,
             pathname:   window.location.pathname,
             href:       window.location.href,
@@ -281,9 +282,13 @@
         }
         recurse(data, "");
         return result;
-    }
+    };
 
-    SMApp.logEvent = async function(event, payload) {
+    let isDebug = function() {
+        return (window.location.hostname.indexOf("localhost") != -1);
+    };
+
+    SMApp.logEvent = async function(name, payload) {
         if (!validate_api_key()) {
             return;
         }
@@ -293,16 +298,18 @@
         }
 
         let json = {
-            event: event,
-            config: config,
-            timestamp: new Date().getTime(),
-            event_id: uuidv4(),
-            payload: JSON.stringify(payload)
+            event: {
+                name: name,
+                id: uuidv4(),
+                timestamp: new Date().getTime(),
+                payload: JSON.stringify(payload)
+            },
+            config: config
         };
 
         json = flatten(json);
-        
-        const URL = "https://integrations.syncmedia.io/v1.0/adlytics/js/events/capture";
+
+        const URL = (isDebug() ? "http://localhost:12000": "https://integrations.syncmedia.io") + "/v1.0/adlytics/js/events/capture";
 
         const response = await fetch(URL, {
             method: 'post',
@@ -320,10 +327,12 @@
     };
 
     (function() {
+        let endpoint = isDebug() ? "sm_capture" : "https://storage.syncmedia.io/libs/sm_capture";
+
         let scripts = document.getElementsByTagName('script');
         var i;
         for (i = 0; i < scripts.length; i++) {
-            if (scripts[i].src.indexOf("https://storage.syncmedia.io/libs/sm_capture") != -1) {
+            if (scripts[i].src.indexOf(endpoint) != -1) {
                 let params = (scripts[i].src.split('?')[1] ?? "").split("&");
                 params.forEach((param) => {
                     let kv = param.split("=");
