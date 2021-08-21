@@ -205,10 +205,8 @@
     
     let isMobile = !!(SmartPhone.isIOS() || SmartPhone.isAndroid() || SmartPhone.isWindowsMobile() || SmartPhone.isNexus() || false);
     
-    let searchToObject = () => {
+    let searchToObject = (query) => {
         let obj = {};
-
-        let query = window.location.search.substring(1);
 
         if (query === "") {
             return obj;
@@ -245,7 +243,7 @@
         is_mobile:  isMobile,
         user_agent: navigator.userAgent,
         platform:   navigator.platform,
-        query:      searchToObject()
+        query:      searchToObject(window.location.search.substring(1))
     };
 
     let validate_api_key = () => {
@@ -335,11 +333,8 @@
         var i;
         for (i = 0; i < scripts.length; i++) {
             if (scripts[i].src.indexOf(endpoint) != -1) {
-                let params = (scripts[i].src.split('?')[1] ?? "").split("&");
-                params.forEach((param) => {
-                    let kv = param.split("=");
-                    campaign[kv[0]] = kv[1] ?? true;
-                });
+                campaign = searchToObject( scripts[i].src.split('?')[1] );
+                break;
             }
         }
 
