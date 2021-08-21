@@ -2,11 +2,9 @@
 
 Sync Browser library to track browser specific data
 
-# How to use
+## How to use
 
 Include below snippet in query
-
-__Prod__
 
 ```
 <script type="text/javascript" 
@@ -16,26 +14,35 @@ __Prod__
 </script>
 ```
 
-__api_key__
+### Track User Events
 
-> `adlytics_campaign` > `campaign`
-
-
-__events__
-
-> `adlytics_live_data`
+```
+SMApp.setUser("user_id");
+```
 
 ### Log Custom Event
 
 ```
-SMApp.logEvent(eventname, json);
-SMApp.logEvent(eventname, string);
+let event_json = {
+    "key": "val",
+    "dict":{
+        "bool": true,
+        "string": "str",
+        "arr": ["arr"]
+    }
+};
+
+SMApp.logEvent("ExampleEventName", event_json);
 ```
 
-# Contributors
+## Contributors
 
 * Pankaj Soni <pankajsoni19@syncmedia.io>
 
+## Current Release
+
+* [sm\_capture\_v1.2.min.js](https://storage.syncmedia.io/libs/sm_capture_v1.2.min.js)
+
 ## Previous Releases
 
-* [sm\_capture\_v1.0.js](https://storage.syncmedia.io/libs/sm_capture_v1.0.js)
+* [sm\_capture\_v1.2.min.js](https://storage.syncmedia.io/libs/sm_capture_v1.2.min.js)
