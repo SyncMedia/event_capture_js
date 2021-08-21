@@ -231,24 +231,25 @@
         return obj;
     };
 
-    let config = {
+    let campaign = {
         user: "unknown",
-        api_key: false,
-        meta: {
-            host:       window.location.host,
-            hostname:   window.location.hostname,
-            pathname:   window.location.pathname,
-            href:       window.location.href,
-            referrer:   document.referrer,
-            is_mobile:  isMobile,
-            user_agent: navigator.userAgent,
-            platform:   navigator.platform,
-            query:      searchToObject()
-        }
+        api_key: false
+    };
+
+    let device = {
+        host:       window.location.host,
+        hostname:   window.location.hostname,
+        pathname:   window.location.pathname,
+        href:       window.location.href,
+        referrer:   document.referrer,
+        is_mobile:  isMobile,
+        user_agent: navigator.userAgent,
+        platform:   navigator.platform,
+        query:      searchToObject()
     };
 
     let validate_api_key = () => {
-        if (!!!config.api_key) {
+        if (!!!campaign.api_key) {
             mylog.error("Please check fix the included js library path, `src` link is missing api_key.");
             return false;
         }
@@ -257,7 +258,7 @@
     };
 
     SMApp.setUser = function(user) {
-        config.user = user;
+        campaign.user = user;
     };
 
     let flatten = function(data) {
@@ -293,18 +294,19 @@
             return;
         }
 
-        if (!!payload) {
+        if (!!!payload) {
             payload = {};
         }
 
         let json = {
+            campaign: campaign,
+            device: device,
             event: {
                 name: name,
                 id: uuidv4(),
                 timestamp: new Date().getTime(),
-                payload: JSON.stringify(payload)
-            },
-            config: config
+                payload: payload
+            }
         };
 
         json = flatten(json);
@@ -336,7 +338,7 @@
                 let params = (scripts[i].src.split('?')[1] ?? "").split("&");
                 params.forEach((param) => {
                     let kv = param.split("=");
-                    config[kv[0]] = kv[1] ?? true;
+                    campaign[kv[0]] = kv[1] ?? true;
                 });
             }
         }
