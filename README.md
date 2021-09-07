@@ -4,11 +4,13 @@ Sync Browser library to track browser specific data
 
 ## How to use
 
-Include below snippet in query
+Include below snippet in query. 
+
+Get Latest version from below. `sm_capture_vx.x.min.js`
 
 ```
 <script type="text/javascript" 
-    src="https://storage.syncmedia.io/libs/sm_capture_v1.1.min.js?api_key=API_KEY" 
+    src="https://storage.syncmedia.io/libs/sm_capture_vx.x.min.js?api_key=API_KEY" 
     charset="utf-8" 
     crossorigin="anonymous">
 </script>
