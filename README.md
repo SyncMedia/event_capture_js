@@ -6,7 +6,7 @@ Sync Browser library to track browser specific data
 
 Include below snippet in query. 
 
-Get Latest version from below. `sm_capture_vx.x.min.js`
+Get latest lib version `sm_capture_vx.x.min.js` from current release section below. 
 
 ```
 <script type="text/javascript" 
