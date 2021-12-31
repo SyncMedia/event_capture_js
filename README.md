@@ -10,7 +10,7 @@ Get latest lib version `sm_capture_vx.x.min.js` from current release section bel
 
 ```
 <script type="text/javascript" 
-    src="https://storage.syncmedia.io/libs/sm_capture_vx.x.min.js?api_key=API_KEY" 
+    src="https://storage.syncmedia.io/libs/sm_capture_v1.2.min.js?api_key=API_KEY" 
     charset="utf-8" 
     crossorigin="anonymous">
 </script>
