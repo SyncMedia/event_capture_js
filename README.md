@@ -6,11 +6,9 @@ Sync Browser library to track browser specific data
 
 Include below snippet in query. 
 
-Get latest lib version `sm_capture_vx.x.min.js` from current release section below. 
-
 ```
 <script type="text/javascript" 
-    src="https://storage.syncmedia.io/libs/sm_capture_v1.2.min.js?api_key=API_KEY" 
+    src="https://cdn.jsdelivr.net/gh/SyncMedia/event_capture_js@master/sync_media_event_capture.min.js?api_key=API_KEY" 
     charset="utf-8" 
     crossorigin="anonymous">
 </script>
@@ -43,8 +41,3 @@ SMApp.logEvent("ExampleEventName", event_json);
 
 ## Current Release
 
-* [sm\_capture\_v1.2.min.js](https://storage.syncmedia.io/libs/sm_capture_v1.2.min.js)
-
-## Previous Releases
-
-* [sm\_capture\_v1.2.min.js](https://storage.syncmedia.io/libs/sm_capture_v1.2.min.js)

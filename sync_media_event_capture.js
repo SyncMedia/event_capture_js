@@ -349,7 +349,7 @@
     };
 
     (function() {
-        let endpoint = isDebug() ? "sm_capture" : "https://storage.syncmedia.io/libs/sm_capture";
+        let endpoint = "sync_media_event_capture";
 
         let scripts = document.getElementsByTagName('script');
         let i;
