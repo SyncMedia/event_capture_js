@@ -1,10 +1,3 @@
-/*
-* https://github.com/uuidjs/uuid
-* uuidv4-8.1.0.min.js
-*/
-
-!function(t,e){"object"==typeof exports&&"undefined"!=typeof module?module.exports=e():"function"==typeof define&&define.amd?define(e):(t=t||self).uuidv4=e()}(this,(function(){"use strict";var t="undefined"!=typeof crypto&&crypto.getRandomValues&&crypto.getRandomValues.bind(crypto)||"undefined"!=typeof msCrypto&&"function"==typeof msCrypto.getRandomValues&&msCrypto.getRandomValues.bind(msCrypto),e=new Uint8Array(16);function n(){if(!t)throw new Error("crypto.getRandomValues() not supported. See https://github.com/uuidjs/uuid#getrandomvalues-not-supported");return t(e)}for(var o=[],r=0;r<256;++r)o.push((r+256).toString(16).substr(1));return function(t,e,r){"string"==typeof t&&(e="binary"===t?new Uint8Array(16):null,t=null);var u=(t=t||{}).random||(t.rng||n)();if(u[6]=15&u[6]|64,u[8]=63&u[8]|128,e){for(var i=r||0,d=0;d<16;++d)e[i+d]=u[d];return e}return function(t,e){var n=e||0,r=o;return(r[t[n+0]]+r[t[n+1]]+r[t[n+2]]+r[t[n+3]]+"-"+r[t[n+4]]+r[t[n+5]]+"-"+r[t[n+6]]+r[t[n+7]]+"-"+r[t[n+8]]+r[t[n+9]]+"-"+r[t[n+10]]+r[t[n+11]]+r[t[n+12]]+r[t[n+13]]+r[t[n+14]]+r[t[n+15]]).toLowerCase()}(u)}}));
-
 /**
  *
  * @auther SM@K<smali.kazmi@hotmail.com>
@@ -12,9 +5,9 @@
  */
 
 (function() {
-    var root = this;
+    let root = this;
 
-    var SmartPhone = function(obj) {
+    let SmartPhone = function(obj) {
         if (obj instanceof SmartPhone)
             return obj;
         if (!(this instanceof SmartPhone))
@@ -96,12 +89,12 @@
     };
 
     SmartPhone.isAny = function() {
-        var foundAny = false;
-        var getAllMethods = Object.getOwnPropertyNames(SmartPhone).filter(function(property) {
+        let foundAny = false;
+        let getAllMethods = Object.getOwnPropertyNames(SmartPhone).filter(function(property) {
             return typeof SmartPhone[property] == 'function';
         });
 
-        for (var index in getAllMethods) {
+        for (let index in getAllMethods) {
             if (getAllMethods[index] === 'setUserAgent' || getAllMethods[index] === 'getUserAgent' ||
                     getAllMethods[index] === 'isAny' || getAllMethods[index] === 'isWindows' ||
                     getAllMethods[index] === 'isIOS') {
@@ -121,14 +114,14 @@
 
     if (typeof exports !== 'undefined') {
 
-        var middleware = function(isMiddleware) {
+        let middleware = function(isMiddleware) {
 
             isMiddleware = isMiddleware === (void 0)  ? true : isMiddleware;
 
             if(isMiddleware) {
                 return function(req, res, next) {
 
-                    var userAgent = req.headers['user-agent'] || '';
+                    let userAgent = req.headers['user-agent'] || '';
                     SmartPhone.setUserAgent(userAgent);
                     req.SmartPhone = SmartPhone;
 
@@ -157,9 +150,9 @@
 }.call(this));
 
 (function() {
-    var root = this;
+    let root = this;
 
-    var SMApp = function(obj) {
+    let SMApp = function(obj) {
         if (obj instanceof SMApp)
             return obj;
         if (!(this instanceof SMApp))
@@ -170,19 +163,19 @@
     let mylog = (function () {
         // let root = {
         //     log: function() {
-        //         var args = Array.prototype.slice.call(arguments);
+        //         let args = Array.prototype.slice.call(arguments);
         //         console.log.apply(console, args);
         //     },
         //     debug: function() {
-        //         var args = Array.prototype.slice.call(arguments);
+        //         let args = Array.prototype.slice.call(arguments);
         //         console.debug.apply(console, args);
         //     },
         //     warn: function() {
-        //         var args = Array.prototype.slice.call(arguments);
+        //         let args = Array.prototype.slice.call(arguments);
         //         console.warn.apply(console, args);
         //     },
         //     error: function() {
-        //         var args = Array.prototype.slice.call(arguments);
+        //         let args = Array.prototype.slice.call(arguments);
         //         console.error.apply(console, args);
         //     }
         // };
@@ -195,7 +188,7 @@
 
         logs.forEach((item) => {
             root[item] = function() {
-                var args = Array.prototype.slice.call(arguments);
+                let args = Array.prototype.slice.call(arguments);
                 console[item].apply(console, args);
             };
         });
@@ -229,6 +222,24 @@
         return obj;
     };
 
+    let lookUpDeviceUUID = () => {
+        let deviceUUIDKey = "uuid.device.syncmedia.io";
+
+        let deviceUUID = localStorage.getItem(deviceUUIDKey);
+        if (!!deviceUUID) {
+            return deviceUUID;
+        }
+
+        deviceUUID = uuidv4();
+        try {
+            localStorage.setItem(deviceUUIDKey, deviceUUID);
+        } catch {
+            //no-op
+        }
+
+        return deviceUUID;
+    }
+
     let campaign = {
         user: "unknown",
         api_key: false
@@ -242,8 +253,9 @@
         referrer:   document.referrer,
         is_mobile:  isMobile,
         user_agent: navigator.userAgent,
-        platform:   navigator.platform,
-        query:      searchToObject(window.location.search.substring(1))
+        platform:   navigator?.platform || 'unknown',
+        query:      searchToObject(window.location.search.substring(1)),
+        id:         lookUpDeviceUUID(),
     };
 
     let validate_api_key = () => {
@@ -260,18 +272,18 @@
     };
 
     let flatten = function(data) {
-        var result = {};
+        let result = {};
         function recurse (cur, prop) {
             if (Object(cur) !== cur) {
                 result[prop] = cur;
             } else if (Array.isArray(cur)) {
-                 for(var i=0, l=cur.length; i<l; i++)
+                 for(let i=0, l=cur.length; i<l; i++)
                      recurse(cur[i], prop + "[" + i + "]");
                 if (l == 0)
                     result[prop] = [];
             } else {
-                var isEmpty = true;
-                for (var p in cur) {
+                let isEmpty = true;
+                for (let p in cur) {
                     isEmpty = false;
                     recurse(cur[p], prop ? prop+"."+p : p);
                 }
@@ -286,6 +298,16 @@
     let isDebug = function() {
         return (window.location.hostname.indexOf("localhost") != -1);
     };
+
+    let uuidv4 = function() {
+        if ('randomUUID' in crypto) {
+            return crypto.randomUUID();
+        }
+
+        return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+            (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+        );
+    }
 
     SMApp.logEvent = async function(name, payload) {
         if (!validate_api_key()) {
@@ -330,7 +352,7 @@
         let endpoint = isDebug() ? "sm_capture" : "https://storage.syncmedia.io/libs/sm_capture";
 
         let scripts = document.getElementsByTagName('script');
-        var i;
+        let i;
         for (i = 0; i < scripts.length; i++) {
             if (scripts[i].src.indexOf(endpoint) != -1) {
                 campaign = searchToObject( scripts[i].src.split('?')[1] );
