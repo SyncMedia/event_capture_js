@@ -38,6 +38,3 @@ SMApp.logEvent("ExampleEventName", event_json);
 ## Contributors
 
 * Pankaj Soni <pankajsoni19@syncmedia.io>
-
-## Current Release
-
