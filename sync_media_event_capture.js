@@ -1,276 +1,6 @@
-/**
- *
- * @auther SM@K<smali.kazmi@hotmail.com>
- * @description website: smak.pk
- */
-
 (function() {
     let root = this;
-
-    let SmartPhone = function(obj) {
-        if (obj instanceof SmartPhone)
-            return obj;
-        if (!(this instanceof SmartPhone))
-            return new SmartPhone(obj);
-        this._wrapped = obj;
-    };
-
-    SmartPhone.userAgent = null;
-    SmartPhone.getUserAgent = function() {
-        return this.userAgent;
-    };
-
-    SmartPhone.setUserAgent = function(userAgent) {
-        this.userAgent = userAgent;
-    };
-
-    SmartPhone.isAndroid = function() {
-        return this.getUserAgent().match(/Android/i);
-    };
-
-    SmartPhone.isBlackBerry = function() {
-        return this.getUserAgent().match(/BlackBerry/i);
-    };
-
-    SmartPhone.isBlackBerryPlayBook = function() {
-        return this.getUserAgent().match(/PlayBook/i);
-    };
-
-    SmartPhone.isBlackBerry10 = function() {
-        return this.getUserAgent().match(/BB10/i);
-    };
-
-    SmartPhone.isIOS = function() {
-        return this.isIPhone() || this.isIPad() || this.isIPod();
-    };
-
-    SmartPhone.isIPhone = function() {
-        return this.getUserAgent().match(/iPhone/i);
-    };
-
-    SmartPhone.isIPad = function() {
-        return this.getUserAgent().match(/iPad/i);
-    };
-
-    SmartPhone.isIPod = function() {
-        return this.getUserAgent().match(/iPod/i);
-    };
-
-    SmartPhone.isOpera = function() {
-        return this.getUserAgent().match(/Opera Mini/i);
-    };
-
-    SmartPhone.isWindows = function() {
-        return this.isWindowsDesktop() || this.isWindowsMobile();
-    };
-
-    SmartPhone.isWindowsMobile = function() {
-        return this.getUserAgent().match(/IEMobile/i);
-    };
-
-    SmartPhone.isWindowsDesktop = function() {
-        return this.getUserAgent().match(/WPDesktop/i);
-    };
-
-    SmartPhone.isFireFox = function() {
-        return this.getUserAgent().match(/Firefox/i);
-    };
-
-    SmartPhone.isNexus = function() {
-        return this.getUserAgent().match(/Nexus/i);
-    };
-
-    SmartPhone.isKindleFire = function() {
-        return this.getUserAgent().match(/Kindle Fire/i);
-    };
-
-    SmartPhone.isPalm = function() {
-        return this.getUserAgent().match(/PalmSource|Palm/i);
-    };
-
-    SmartPhone.isAny = function() {
-        let foundAny = false;
-        let getAllMethods = Object.getOwnPropertyNames(SmartPhone).filter(function(property) {
-            return typeof SmartPhone[property] == 'function';
-        });
-
-        for (let index in getAllMethods) {
-            if (getAllMethods[index] === 'setUserAgent' || getAllMethods[index] === 'getUserAgent' ||
-                    getAllMethods[index] === 'isAny' || getAllMethods[index] === 'isWindows' ||
-                    getAllMethods[index] === 'isIOS') {
-                continue;
-            }
-            if (SmartPhone[getAllMethods[index]]()) {
-                foundAny = true;
-                break;
-            }
-        }
-        return foundAny;
-    };
-
-    if(typeof window === 'function' || typeof window === 'object') {
-        SmartPhone.setUserAgent(navigator.userAgent);
-    }
-
-    if (typeof exports !== 'undefined') {
-
-        let middleware = function(isMiddleware) {
-
-            isMiddleware = isMiddleware === (void 0)  ? true : isMiddleware;
-
-            if(isMiddleware) {
-                return function(req, res, next) {
-
-                    let userAgent = req.headers['user-agent'] || '';
-                    SmartPhone.setUserAgent(userAgent);
-                    req.SmartPhone = SmartPhone;
-
-                    if ('function' === typeof res.locals) {
-                        res.locals({SmartPhone: SmartPhone});
-                    } else {
-                        res.locals.SmartPhone = SmartPhone;
-                    }
-
-                    next();
-                };
-            } else {
-                return SmartPhone;
-            }
-
-        };
-
-        if (typeof module !== 'undefined' && module.exports) {
-            exports = module.exports = middleware;
-        }
-        exports = middleware;
-    } else {
-        root.SmartPhone = SmartPhone;
-    }
-
-}.call(this));
-
-(function() {
-    let root = this;
-
-    let SMApp = function(obj) {
-        if (obj instanceof SMApp)
-            return obj;
-        if (!(this instanceof SMApp))
-            return new SMApp(obj);
-        this._wrapped = obj;
-    };
-
-    let mylog = (function () {
-        // let root = {
-        //     log: function() {
-        //         let args = Array.prototype.slice.call(arguments);
-        //         console.log.apply(console, args);
-        //     },
-        //     debug: function() {
-        //         let args = Array.prototype.slice.call(arguments);
-        //         console.debug.apply(console, args);
-        //     },
-        //     warn: function() {
-        //         let args = Array.prototype.slice.call(arguments);
-        //         console.warn.apply(console, args);
-        //     },
-        //     error: function() {
-        //         let args = Array.prototype.slice.call(arguments);
-        //         console.error.apply(console, args);
-        //     }
-        // };
-
-        let logs = ['log', 'warn', 'error', 'assert'];
-
-        if (window.location.hostname == "localhost") {
-            logs.push('debug');
-        }
-
-        logs.forEach((item) => {
-            root[item] = function() {
-                let args = Array.prototype.slice.call(arguments);
-                console[item].apply(console, args);
-            };
-        });
-
-        return root;
-    }());
     
-    let isMobile = !!(SmartPhone.isIOS() || SmartPhone.isAndroid() || SmartPhone.isWindowsMobile() || SmartPhone.isNexus() || false);
-    
-    let searchToObject = (query) => {
-        let obj = {};
-
-        if (query === "") {
-            return obj;
-        }
-        
-        let pairs = query.split("&");
-
-        for (let i in pairs ) {
-            if ( pairs[i] === "" ) { continue }
-              
-            let pair = pairs[i].split("=");
-
-            if (pair.length === 1 || pair[1] === "") {
-                obj[ decodeURIComponent( pair[0] ) ] = true;
-            } else {
-                obj[ decodeURIComponent( pair[0] ) ] = decodeURIComponent( pair[1] );
-            }
-        }
-
-        return obj;
-    };
-
-    let lookUpDeviceUUID = () => {
-        let deviceUUIDKey = "uuid.device.syncmedia.io";
-
-        let deviceUUID = localStorage.getItem(deviceUUIDKey);
-        if (!!deviceUUID) {
-            return deviceUUID;
-        }
-
-        deviceUUID = uuidv4();
-        try {
-            localStorage.setItem(deviceUUIDKey, deviceUUID);
-        } catch {
-            //no-op
-        }
-
-        return deviceUUID;
-    }
-
-    let campaign = {
-        user: "unknown",
-        api_key: false
-    };
-
-    let device = {
-        host:       window.location.host,
-        hostname:   window.location.hostname,
-        pathname:   window.location.pathname,
-        href:       window.location.href,
-        referrer:   document.referrer,
-        is_mobile:  isMobile,
-        user_agent: navigator.userAgent,
-        platform:   navigator?.platform || 'unknown',
-        query:      searchToObject(window.location.search.substring(1)),
-        id:         lookUpDeviceUUID(),
-    };
-
-    let validate_api_key = () => {
-        if (!!!campaign.api_key) {
-            mylog.error("Please check fix the included js library path, `src` link is missing api_key.");
-            return false;
-        }
-
-        return true;
-    };
-
-    SMApp.setUser = function(user) {
-        campaign.user = user;
-    };
-
     let flatten = function(data) {
         let result = {};
         function recurse (cur, prop) {
@@ -292,30 +22,120 @@
             }
         }
         recurse(data, "");
+        
         return result;
     };
-
+    
     let isDebug = function() {
         return (window.location.hostname.indexOf("localhost") != -1);
     };
-
+    
     let uuidv4 = function() {
         if ('randomUUID' in crypto) {
             return crypto.randomUUID();
         }
-
-        return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+    
+        return function() {
+            return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
             (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
-        );
+          );
+        }
+    };
+    
+    let lookUpDeviceUUID = function() {
+        let deviceUUIDKey = "uuid.device.syncmedia.io";
+    
+        let deviceUUID = localStorage.getItem(deviceUUIDKey);
+        if (!!deviceUUID) {
+            return deviceUUID;
+        }
+    
+        deviceUUID = uuidv4();
+        try {
+            localStorage.setItem(deviceUUIDKey, deviceUUID);
+        } catch {
+            //no-op
+        }
+    
+        return deviceUUID;
     }
+    
+    let searchToObject = function(query) {
+        let obj = {};
+    
+        if (query === "") {
+            return obj;
+        }
+        
+        let pairs = query.split("&");
+    
+        for (let i in pairs ) {
+            if ( pairs[i] === "" ) { continue }
+              
+            let pair = pairs[i].split("=");
+    
+            if (pair.length === 1 || pair[1] === "") {
+                obj[ decodeURIComponent( pair[0] ) ] = true;
+            } else {
+                obj[ decodeURIComponent( pair[0] ) ] = decodeURIComponent( pair[1] );
+            }
+        }
+    
+        return obj;
+    };
+    
+    let mylog = (function () {
+        let logs = ['log', 'warn', 'error', 'assert'];
 
-    SMApp.logEvent = async function(name, payload) {
-        if (!validate_api_key()) {
-            return;
+        if (window.location.hostname == "localhost") {
+            logs.push('debug');
         }
 
-        if (!!!payload) {
-            payload = {};
+        logs.forEach(function(item) {
+            root[item] = function() {
+                let args = Array.prototype.slice.call(arguments);
+                console[item].apply(console, args);
+            };
+        });
+
+        return root;
+    }());
+
+    
+
+    let SMApp = function(obj) {
+        if (obj instanceof SMApp)
+            return obj;
+        if (!(this instanceof SMApp))
+            return new SMApp(obj);
+        this._wrapped = obj;
+    };
+    
+    let campaign = {
+        user: "unknown",
+        api_key: ""
+    };
+
+    let device = {
+        host:       window.location.host,
+        hostname:   window.location.hostname,
+        pathname:   window.location.pathname,
+        href:       window.location.href,
+        referrer:   document.referrer,
+        user_agent: navigator.userAgent,
+        platform:   navigator?.platform || 'unknown',
+        query:      searchToObject(window.location.search.substring(1)),
+        id:         lookUpDeviceUUID(),
+    };
+
+    SMApp.setUser = function(user) {
+        campaign.user = user;
+    };
+
+    SMApp.logEvent = async function(name, payload) {
+        if (!!!campaign.api_key) {
+            mylog.error("Please check the included js library path, `src` link is missing api_key.");
+            return false;
         }
 
         let json = {
@@ -325,7 +145,7 @@
                 name: name,
                 id: uuidv4(),
                 timestamp: new Date().getTime(),
-                payload: payload
+                payload: payload || {}
             }
         };
 
@@ -358,10 +178,6 @@
                 campaign = searchToObject( scripts[i].src.split('?')[1] );
                 break;
             }
-        }
-
-        if (!validate_api_key()) {
-            return;
         }
 
         SMApp.logEvent("open");
