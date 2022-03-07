@@ -8,7 +8,7 @@ Include below snippet in query.
 
 ```
 <script type="text/javascript" 
-    src="https://cdn.jsdelivr.net/gh/SyncMedia/event_capture_js@master/sync_media_event_capture.min.js?api_key=API_KEY" 
+    src="https://cdn.jsdelivr.net/gh/SyncMedia/event_capture_js@v1.3.0/sync_media_event_capture.min.js?api_key=API_KEY" 
     charset="utf-8" 
     crossorigin="anonymous">
 </script>
